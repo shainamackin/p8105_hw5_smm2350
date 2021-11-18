@@ -192,10 +192,12 @@ study_df %>%
   ggplot(aes(x = as.numeric(week), y = as.numeric(value), color = subject_id)) +
     geom_line() +
   labs(
-    title = "Subject values over time",
+    title = "Subject Values Across Study Arms Over Time",
     x = "Week",
-    y = "Value"
-  ) 
+    y = "Value",
+    color = "Subject ID"
+  ) +
+  facet_grid(cols = vars(study_arm))
 ```
 
 
