@@ -200,6 +200,7 @@ study_df %>%
   facet_grid(cols = vars(study_arm))
 ```
 
+The values among the study participants in the `experiment` arm are higher than the values among those in the `control` arm and they appear to increase over time, unlike those in the `control` arm.  
 
 ## Problem 3
 
