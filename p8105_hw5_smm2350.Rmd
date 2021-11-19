@@ -28,7 +28,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 For this problem, we are interested in data gathered and made publicly available by _The Washington Post_ on homicides in 50 large U.S. cities. In the below code chunk, I import and clean the data: 
 
-```{r}
+```{r homicide_import}
 homicide_df = 
   read_csv("./homicide_data/homicide-data.csv", na = c(" ", "Unknown")) %>%
   mutate(
@@ -46,7 +46,7 @@ The data set contains `r nrow(homicide_df)` observations and `r ncol(homicide_df
 
 For the city of Baltimore, MD, we now use the `prop.test` function to estimate the proportion of homicides that are unsolved: 
 
-```{r}
+```{r baltimore}
 baltimore_df = 
   homicide_df %>%
   filter(city_state == "BaltimoreMD")
@@ -69,7 +69,7 @@ baltimore_test %>%
 
 Next, we iterate across some additional cities: 
 
-```{r}
+```{r some_cities}
 prop_test_function = function(city_df) {
   
   city_summary = 
@@ -96,7 +96,7 @@ homicide_df %>%
 
 Now, we iterate across all cities:
 
-```{r}
+```{r all_cities}
 results_df =
   homicide_df %>%
   nest(data = uid:resolution) %>%
@@ -123,16 +123,21 @@ nested_df %>%
 
 Finally, we are interested in making a plot to show estimates and confidence intervals for each city: 
 
-```{r}
+```{r result}
 results_df %>%
   mutate(city_state = fct_reorder(city_state, estimate)) %>%
   ggplot(aes(x = city_state, y = estimate)) +
   geom_point() +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(
+    x = "City, State",
+    y = "Estimate", 
+    title = "Estimates and Confidence Intervals by City"
+  )
 ```
 
-```{r}
+```{r homicide_df }
 homicide_df %>%
   group_by(city_state) %>%
   summarize(
@@ -160,7 +165,7 @@ First, I'll create a tidy dataframe containing data from all participants, inclu
 </br>
 • Tidying the result; manipulating file names to include control arm and subject ID and making sure weekly observations are “tidy”
 
-```{r}
+```{r study_df, message = FALSE}
 study_df = 
 tibble(
   files = list.files("./data")) %>% 
@@ -185,9 +190,13 @@ tibble(
     study_arm = if_else(study_arm == "con", "control", "experiment"))
 ```
 
+```{r}
+print(study_df)
+```
+
 Finally, I'll make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
 
-```{r}
+```{r spaghetti}
 study_df %>%
   ggplot(aes(x = as.numeric(week), y = as.numeric(value), color = subject_id)) +
     geom_line() +
@@ -206,9 +215,7 @@ The values among the study participants in the `experiment` arm are higher than 
 
 The code chunk below loads the iris dataset from the tidyverse package and introduces some missing values in each column. The purpose of this problem is to fill in those missing values.
 
-```{r}
-library(tidyverse)
-
+```{r iris}
 set.seed(10)
 
 iris_with_missing = iris %>% 
@@ -216,9 +223,9 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
-Write a function: 
+For numeric variables, I will fill in missing values with the mean of non-missing values. For character variables, I will fill in missing values with "virginica". To do so, I will write a function that takes a vector as an argument; replaces missing values accordingly; and returns the resulting vector. I will then apply this function to the columns of iris_with_missing using a map statement.
 
-```{r}
+```{r missing}
 fill_in_missing = function(vector) {
   
   if(is.numeric(vector)) {
