@@ -204,6 +204,8 @@ The values among the study participants in the `experiment` arm are higher than 
 
 ## Problem 3
 
+The code chunk below loads the iris dataset from the tidyverse package and introduces some missing values in each column. The purpose of this problem is to fill in those missing values.
+
 ```{r}
 library(tidyverse)
 
@@ -219,19 +221,22 @@ Write a function:
 ```{r}
 fill_in_missing = function(vector) {
   
-  if(is.numeric) {
+  if(is.numeric(vector)) {
     
-    ...
-
+    vector = replace_na(vector, round(mean(vector, na.rm = TRUE), digits = 2))
+    return(vector)  
   }
   
-  if(is.character) {
+  if(is.character(vector)) {
     
-    ...
-    
+    vector = replace_na(vector, "virginica")
+    return(vector)
   }
-  
+    
 }
+
+map(iris_with_missing, fill_in_missing)
+
 ```
 
 
